@@ -63,9 +63,10 @@ public class ExternLink implements IHook {
             protected void beforeHookedMethod(MethodHookParam param) {
                 WebResourceRequest request = (WebResourceRequest) param.args[1];
                 Uri uri = request.getUrl();
-                if ("link.zhihu.com".equals(uri.getHost())) {
                     if (Helper.prefs.getBoolean("switch_mainswitch", false) && (Helper.prefs.getBoolean("switch_externlink", false) || Helper.prefs.getBoolean("switch_externlinkex", false))) {
-                        Uri url = Uri.parse(uri.getQueryParameter("target"));
+                        Uri url = "link.zhihu.com".equals(uri.getHost())
+                                ? Uri.parse(uri.getQueryParameter("target"))
+                                : uri;
                         if (Helper.prefs.getBoolean("switch_externlinkex", false)) {
                             Intent intent = new Intent(Intent.ACTION_VIEW, url);
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -77,7 +78,6 @@ public class ExternLink implements IHook {
                             param.args[1] = request2;
                         }
                     }
-                }
             }
         });
 
